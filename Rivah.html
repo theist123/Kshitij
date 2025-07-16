@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Happy Birthday My Love</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      font-family: 'Quicksand', sans-serif;
+      height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      color: white;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100dvh;
+      object-fit: cover;
+      z-index: 0;
+      display: none;
+    }
+
+    .overlay {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      color: #fff;
+      margin-bottom: 1.5rem;
+      text-shadow: 2px 2px #e91e63;
+    }
+
+    .birthday-message {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(1.2rem, 4vw, 2rem);
+      padding: 1.5rem 2rem;
+      color: #ffe0ec;
+      animation: fadeIn 2s ease-in-out;
+      max-width: 90%;
+      display: none;
+    }
+
+    #countdown {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 1px 1px #e91e63;
+    }
+
+    footer {
+      margin-top: 2rem;
+      font-size: 1rem;
+      color: #fff;
+      text-shadow: 1px 1px #c2185b;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .heart {
+      position: absolute;
+      color: #ff69b4;
+      opacity: 0.3;
+      filter: blur(4px);
+      animation: floatUp linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100dvh) scale(0.8); opacity: 0; }
+      50% { opacity: 0.5; }
+      100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+    }
+
+    .music-control {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 3;
+      background: rgba(255, 255, 255, 0.6);
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #e91e63;
+      box-shadow: 0 0 10px rgba(255, 192, 203, 0.5);
+      display: none;
+    }
+
+    button:focus { outline: none; }
+  </style>
+</head>
+<body>
+
+  <!-- 🎥 Background Video -->
+  <video id="bg-video" autoplay muted loop playsinline>
+    <source src="foreverone.mp4" type="video/mp4" />
+  </video>
+
+  <!-- ❤️ Main Content -->
+  <div class="overlay">
+    <h1>Very Special Day!! 💕</h1>
+    <div id="countdown"></div>
+
+    <div class="birthday-message">
+      🎉 Wishing you a day filled with love, laughter, and everything your heart desires. 💖<br><br>
+      You make my world brighter every day. I’m so lucky to celebrate this moment with you. 🥰
+    </div>
+
+    <footer>With all my love — Always 💘</footer>
+  </div>
+
+  <!-- 🎶 Music -->
+  <audio id="bg-music" loop>
+    <source src="og.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- ⏯️ Music Control -->
+  <button class="music-control" onclick="toggleMusic()">🎵 Play Music</button>
+
+  <!-- 💖 Floating Hearts -->
+  <script>
+    const createHearts = () => {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.innerText = '💖';
+      heart.style.left = Math.random() * 100 + 'vw';
+      const size = 40 + Math.random() * 60;
+      heart.style.fontSize = size + 'px';
+      heart.style.animationDuration = (4 + Math.random() * 4) + 's';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 8000);
+    };
+    setInterval(createHearts, 300);
+  </script>
+
+  <!-- 🎵 Music Logic -->
+  <script>
+    const music = document.getElementById("bg-music");
+    const button = document.querySelector(".music-control");
+    let isPlaying = false;
+
+    function fadeInAudio(audio, duration = 3000) {
+      audio.volume = 0;
+      audio.play().catch(() => {});
+      const step = 0.01;
+      const interval = duration / (1 / step);
+      const fade = setInterval(() => {
+        if (audio.volume < 1) {
+          audio.volume = Math.min(audio.volume + step, 1);
+        } else {
+          clearInterval(fade);
+        }
+      }, interval);
+    }
+
+    function toggleMusic() {
+      if (isPlaying) {
+        music.pause();
+        button.textContent = "🎵 Play Music";
+      } else {
+        fadeInAudio(music);
+        button.textContent = "⏸️ Pause Music";
+      }
+      isPlaying = !isPlaying;
+    }
+
+    // iOS fix: start music on first touch
+    document.body.addEventListener('click', function once() {
+      if (!isPlaying) {
+        fadeInAudio(music);
+        button.textContent = "⏸️ Pause Music";
+        isPlaying = true;
+      }
+      document.body.removeEventListener('click', once);
+    });
+  </script>
+
+  <!-- ⏳ Countdown Logic -->
+  <script>
+    const countdownEl = document.getElementById("countdown");
+    const video = document.getElementById("bg-video");
+    const musicBtn = document.querySelector(".music-control");
+    const message = document.querySelector(".birthday-message");
+
+    const targetDate = new Date("July 18, 2025 00:00:00").getTime();
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        clearInterval(countdownInterval);
+        countdownEl.style.display = "none";
+        video.style.display = "block";
+        message.style.display = "block";
+        musicBtn.style.display = "block";
+        fadeInAudio(music);
+        button.textContent = "⏸️ Pause Music";
+        isPlaying = true;
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      countdownEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    };
+
+    const countdownInterval = setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+
+</body>
+</html>
